@@ -1,0 +1,42 @@
+<!DOCCTYPE html>
+<html lang="en">
+	<head>
+	      <meta charset="utf-8">
+	      <title>Jotter</title>
+	      <link href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.css" rel="stylesheet">
+	      <style>
+		      .topbar {font-family:arial; font-size:8pt;}
+		      .content {padding-top: 5px;}
+		      .content tr:nth-child(even){background-color: #D8D8D8;}
+		      .content tr:nth-child(odd){background-color: #ffffff;}
+		      .content th{color: white; background-color: #610B21;}
+		      .content table{font-family:arial; font-size:10pt;}
+		      .content table{margin-top: 25px;}
+	      </style>
+      </head>
+      
+      <body>
+
+          {%- block topbar -%}
+	  <div class="topbar">
+          	<div class="fill">
+			<div class="container">
+				<h2>
+					<a href="/" class="brand">Jotter</a> <small>Starring Flask, MongoDB and MongoEngine</small>
+				</h2>
+			</div>
+		</div>
+	</div>
+	
+	{%- endblock -%}
+	
+	<div class="container">
+		<div class="content">
+			{% block page_header %}{% endblock %}
+			{% block content %}{% endblock %}
+		</div>
+	</div>
+	{% block js_footer %}{% endblock %}
+	</body>
+</html>
+

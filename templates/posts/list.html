@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<table>
+	<thead>
+		<th>created</th>
+		<th>environment</th>
+		<th>branch</th>
+		<th>build</th>
+		<th>suite</th>
+		<th>scenario</th>
+		<th>result</th>
+		<th>message</th>
+		<th>time</th>
+		<th>mem</th>
+		<th>cpu</th>
+	</thead>
+	<tbody>
+	{% for post in posts %}
+		{% if post.environment == 'uat.maxxtrader.com' %}
+		<tr class="{{ loop.cycle('odd', 'even') }}">
+			<td>{{ post.created_at.strftime('%H:%M %Y-%m-%d') }}</td>
+			<td>{{ post.environment }}</td>
+			<td>{{ post.branch }}</td>
+			<td>{{ post.build }}</td>
+			<td>{{ post.suite }}</td>
+			<td>{{ post.scenario }}</td>
+			<td>{{ post.result }}</td>
+			<td>{{ post.message }}</td>
+			<td>{{ post.run_time }}</td>
+			<td>{{ post.used_memory_delta }}</td>
+			<td>{{ post.user_cpu_delta }}</td>
+		</tr>
+		{% endif %}
+	{% endfor %}
+	</tbody>
+</table>
+<table>
+	<thead>
+		<th>created</th>
+		<th>environment</th>
+		<th>branch</th>
+		<th>build</th>
+		<th>suite</th>
+		<th>scenario</th>
+		<th>result</th>
+		<th>message</th>
+		<th>time</th>
+		<th>mem</th>
+		<th>cpu</th>
+	</thead>
+	<tbody>
+	{% for post in posts %}
+		{% if post.environment == 'directline.pulsetradingsystem.com' %}
+		<tr class="{{ loop.cycle('odd', 'even') }}">
+			<td>{{ post.created_at.strftime('%H:%M %Y-%m-%d') }}</td>
+			<td>{{ post.environment }}</td>
+			<td>{{ post.branch }}</td>
+			<td>{{ post.build }}</td>
+			<td>{{ post.suite }}</td>
+			<td>{{ post.scenario }}</td>
+			<td>{{ post.result }}</td>
+			<td>{{ post.message }}</td>
+			<td>{{ post.run_time }}</td>
+			<td>{{ post.used_memory_delta }}</td>
+			<td>{{ post.user_cpu_delta }}</td>
+		</tr>
+		{% endif %}
+	{% endfor %}
+	</tbody>
+{% endblock %}
