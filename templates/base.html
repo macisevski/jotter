@@ -7,12 +7,32 @@
 	      <style>
 		      .topbar {font-family:arial; font-size:8pt;}
 		      .content {padding-top: 5px;}
-		      .content tr:nth-child(even){background-color: #D8D8D8;}
-		      .content tr:nth-child(odd){background-color: #ffffff;}
-		      .content th{color: white; background-color: #610B21;}
+		      .content .odd{background-color: #f2f2f2;}
+		      .content .even{background-color: #ffffff;}
+		      .content .last{padding: 0 0 0 0;}
+		      .content td{padding:0 15px 0 0;}
+		      .content th{color: white; background-color: #252525; text-align: left; padding: 0 15px 0 0}
 		      .content table{font-family:arial; font-size:10pt;}
 		      .content table{margin-top: 25px;}
+		      .content table{border-collapse: collapse;}
 	      </style>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			$(function() {
+					var data = null;
+
+
+					setInterval(function() {
+						data = $.ajax({
+							type: "GET",
+							data: {},
+							url: jot,
+							success: function(html) {$("#uat").html(html);}
+							});
+						}, 500);
+
+					});
+		</script>
       </head>
       
       <body>
