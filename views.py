@@ -10,6 +10,7 @@ from jotter import app
 import datetime
 import os
 import json
+import base64
 
 posts = Blueprint('posts', __name__, template_folder='templates')
 di = {'scenario': '', 'environment': '', 'branch': '', 'build': '', 'suite': ''}
@@ -52,15 +53,18 @@ def add_post():
         print e
         r = {"Error": str(e)}
     finally:
-        return jsonify(r)
+        return jsonify({"r":r})
 
 
 @app.route("/upload", methods=["POST", "GET"])
 def upload():
     try:
-        f = request.files['file']
-        f.save(os.path.join(app.config["UPLOAD_FOLDER"], f.filename))
-        ret = redirect(url_for('uploaded_file', filename=f.filename))
+        fdata = base64.b64decode(request.get_data())
+        fname = request.headers['file']
+        f = open(os.path.join(app.config["UPLOAD_FOLDER"], fname), 'w')
+        f.write(fdata)
+        f.close()
+        ret = redirect(url_for('uploaded_file', filename=fname))
     except Exception, e:
         print e
         ret = jsonify({"Error": str(e)})
