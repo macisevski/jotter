@@ -33,7 +33,7 @@ class ListView(MethodView):
 @app.route("/jot", methods=["GET", "POST"])
 def add_post():
     try:
-        data = json.loads(request.get_json())
+        data = json.load(request.get_json())
         post = Post()
         post.created_at = datetime.datetime.now()
         post.environment = data['environment']
@@ -59,7 +59,7 @@ def add_post():
 @app.route("/upload", methods=["POST", "GET"])
 def upload():
     try:
-        fdata = base64.b64decode(request.get_data())
+        fdata = base64.b64decode(request.get_json())
         fname = request.headers['file']
         f = open(os.path.join(app.config["UPLOAD_FOLDER"], fname), 'w')
         f.write(fdata)
