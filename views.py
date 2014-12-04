@@ -33,7 +33,7 @@ class ListView(MethodView):
 @app.route("/jot", methods=["GET", "POST"])
 def add_post():
     try:
-        data = json.load(request.get_json())
+        data = json.loads(request.get_json())
         post = Post()
         post.created_at = datetime.datetime.now()
         post.environment = data['environment']
