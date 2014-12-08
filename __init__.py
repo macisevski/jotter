@@ -23,7 +23,7 @@ def utility_processor():
 
     def format_result(result):
         if result:
-            result = 'Passed' if result == '0' else 'Failed'
+            result = 'Passed' if result == '1' else 'Failed'
         return result
     return dict(format_runtime=format_runtime, format_result=format_result)
 
