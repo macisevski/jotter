@@ -14,7 +14,6 @@
 		<th>time</th>
 		<th>mem</th>
 		<th>cpu</th>
-		<th>report</th>
 	</thead>
 	<tbody>
 	{% for post in posts %}
@@ -24,13 +23,12 @@
 			<td>{{ post.branch }}</td>
 			<td>{{ post.build }}</td>
 			<td>{{ post.suite }}</td>
-			<td>{{ post.scenario }}</td>
+			<td><a href='/uploads/{{post.report}}'>{{ post.scenario }}</a></td>
 			<td>{{ format_result(post.result) }}</td>
-			<td>{{ post.message }}</td>
+			<td><div contenteditable="true" id={{ post.report }} onblur="edit('{{ post.report }}')">{{ post.message }}</div></td>
 			<td>{{ format_runtime(post.run_time) }}</td>
 			<td>{{ post.used_memory_delta }}</td>
-			<td>{{ post.user_cpu_delta }}</td>
-			<td class="last"><a href='/uploads/{{ post.report }}'>{{ post.report  }}</a></td>
+			<td class="last">{{ post.user_cpu_delta }}</td>
 		</tr>
 	{% endfor %}
 	</tbody>

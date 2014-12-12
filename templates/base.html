@@ -10,28 +10,28 @@
 		      .content .odd{background-color: #f2f2f2;}
 		      .content .even{background-color: #ffffff;}
 		      .content .last{padding: 0 0 0 0;}
-		      .content td{padding:0 15px 0 0;}
+		      .content td{padding:0 15px 0 0; border: #d8dfe5 1px solid;}
 		      .content th{color: white; background-color: #252525; text-align: left; padding: 0 15px 0 0}
-		      .content table{font-family:arial; font-size:10pt;}
+		      /*.content tr:hover {background-color: #999999}*/
+		      .content table{font-family:arial; font-size:10pt; color: #787c7f;}
 		      .content table{margin-top: 25px;}
 		      .content table{border-collapse: collapse;}
+		      .content a:link {text-decoration: none; font-size: 11pt; color: #473c8b;}
+		      .content a:hover {background: #f0f8ff; color: #6495ed;}
 	      </style>
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 		<script type="text/javascript" charset="utf-8">
-			$(function() {
-					var data = null;
-
-
-					setInterval(function() {
-						data = $.ajax({
-							type: "GET",
-							data: {},
-							url: jot,
-							success: function(html) {$("#uat").html(html);}
-							});
-						}, 500);
-
-					});
+			
+			function edit(report) {
+				var content = document.getElementById(report).innerHTML;
+				$.ajax({
+					type: "PUT",
+					contentType: "application/json; charset=utf-8",
+					url: "/update",
+					data: JSON.stringify({'report': report, 'message': content}),
+					dataType: "json"
+				});
+			}
 		</script>
       </head>
       

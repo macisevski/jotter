@@ -24,3 +24,9 @@ class Post(db.Document):
     meta = {'allow_inheritance': True, 'indexes': ['-created_at'],
             'ordering': ['-created_at']
             }
+
+    def find(self, report):
+	print type(db)
+	post = self.objects.filter(report=report)[0]
+	return post
+

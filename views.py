@@ -48,27 +48,31 @@ def add_post():
         post.user_cpu_delta = data['user_cpu_delta']
         post.report = data['report']
         post.save()
-        r = post.report
+	r = post
     except Exception, e:
         print e
         r = {"Error": str(e)}
     finally:
-        return jsonify({"r":r})
+        return jsonify({"posted":r})
 
 
 @app.route("/upload", methods=["POST", "GET"])
 def upload():
+	import urllib
         fname = request.headers['name']
-        print fname
         data = request.get_data()
-        print 1
-        fdata = base64.b64decode(data)
         f = open(os.path.join(app.config["UPLOAD_FOLDER"], fname), 'w')
-        f.write(fdata)
+        f.write(data)
         f.close()
-        ret = redirect(url_for('uploaded_file', filename=fname))
-        return ret
+        return jsonify({'uploaded_file': fname})
 
+@app.route("/update", methods=["PUT"])
+def update_post():
+	data = json.loads(request.get_data())
+	post = Post.objects.filter(report=data['report'])[0]
+	post.message = data['message']
+	post.save()
+	return jsonify({'message': data['message']})
 
 @app.route("/uploads/<filename>")
 def uploaded_file(filename):
