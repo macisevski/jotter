@@ -36,17 +36,17 @@ def add_post():
         data = json.loads(request.get_data())
         post = Post()
         post.created_at = datetime.datetime.now()
-        post.environment = data['environment']
-        post.branch = data['branch']
-        post.build = data['build']
-        post.suite = data['suite']
-        post.scenario = data['scenario']
-        post.result = data['result']
-        post.message = data['message']
-        post.run_time = data['run_time']
-        post.used_memory_delta = data['used_memory_delta']
-        post.user_cpu_delta = data['user_cpu_delta']
-        post.report = data['report']
+        post.environment = data.get('environment', '')
+        post.branch = data.get('branch', '')
+        post.build = data.get('build', '')
+        post.suite = data.get('suite', '')
+        post.scenario = data.get('scenario', '')
+        post.result = data.get('result', '')
+        post.message = data.get('message', '')
+        post.run_time = data.get('run_time', '')
+        post.used_memory_delta = data.get('used_memory_delta', -1)
+        post.user_cpu_delta = data.get('user_cpu_delta', -1)
+        post.report = data.get('report', '')
         post.save()
 	r = post
     except Exception, e:
@@ -69,7 +69,7 @@ def upload():
 @app.route("/update", methods=["PUT"])
 def update_post():
 	data = json.loads(request.get_data())
-	post = Post.objects.filter(report=data['report'])[0]
+	post = Post.objects.filter(created_at=data['created_at'])[0]
 	post.message = data['message']
 	post.save()
 	return jsonify({'message': data['message']})

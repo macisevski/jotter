@@ -18,19 +18,24 @@
 	<tbody>
 	{% for post in posts %}
 		<tr class="{{ loop.cycle('odd', 'even') }}">
-			<td>{{ post.created_at.strftime('%H:%M %Y-%m-%d') }}</td>
+			<td><i>{{ post.created_at.strftime('%H:%M:%S %Y-%m-%d') }}</i></td>
 			<td>{{ post.environment }}</td>
 			<td>{{ post.branch }}</td>
 			<td>{{ post.build }}</td>
 			<td>{{ post.suite }}</td>
-			<td><a href='/uploads/{{post.report}}'>{{ post.scenario }}</a></td>
-			<td>{{ format_result(post.result) }}</td>
-			<td><div contenteditable="true" id={{ post.report }} onblur="edit('{{ post.report }}')">{{ post.message }}</div></td>
-			<td>{{ format_runtime(post.run_time) }}</td>
-			<td>{{ post.used_memory_delta }}</td>
-			<td class="last">{{ post.user_cpu_delta }}</td>
+			{% if post.report != ''%}
+				<td><a href='/uploads/{{post.report}}'>{{ post.scenario }}</a></td>
+			{% else %}
+				<td>{{ post.scenario }}</td>
+			{% endif %}
+			<td class="{{ format_result(post.result) }}">{{ format_result(post.result) }}</td>
+			<td><div contenteditable="true" id='{{ post.created_at }}' onblur="edit('{{ post.created_at }}')">{{ post.message }}</div></td>
+			<td><i>{{ format_runtime(post.run_time) }}</i></td>
+			<td><i>{{ '' if post.used_memory_delta == -1 else post.used_memory_delta }}</i></td>
+			<td class="last"><i>{{ '' if post.user_cpu_delta == -1 else post.user_cpu_delta}}</i></td>
 		</tr>
 	{% endfor %}
 	</tbody>
 </table>
 {% endblock %}
+-1
