@@ -18,7 +18,7 @@
 	<tbody>
 	{% for post in posts %}
 		<tr class="{{ loop.cycle('odd', 'even') }}">
-			<td><i>{{ post.created_at.strftime('%H:%M:%S %Y-%m-%d') }}</i></td>
+			<td><i>{{ post.created_at.strftime('%d-%m-%y (%H:%M:%S)') }}</i></td>
 			<td>{{ post.environment }}</td>
 			<td>{{ post.branch }}</td>
 			<td>{{ post.build }}</td>

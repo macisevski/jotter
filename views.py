@@ -13,20 +13,25 @@ import json
 import base64
 
 posts = Blueprint('posts', __name__, template_folder='templates')
-di = {'scenario': '', 'environment': '', 'branch': '', 'build': '', 'suite': ''}
 
 
 class ListView(MethodView):
+    def __init__(self):
+        self.di = {'scenario': '', 'environment': '', 'branch': '',
+                   'build': '', 'suite': ''}
+
     def get(self, *args, **kwargs):
         print request.args.keys()
         for key, value in request.args.iteritems():
-            di[key] = value
+            self.di[key] = value
         # posts = Post.objects(__raw__=di)
-        posts = Post.objects.filter(scenario__icontains=di["scenario"])
-        posts = Post.objects.filter(environment__icontains=di["environment"])
-        posts = Post.objects.filter(branch__icontains=di["branch"])
-        posts = Post.objects.filter(build__icontains=di["build"])
-        posts = Post.objects.filter(suite__icontains=di["suite"])
+        print Post.objects.count()
+        posts = Post.objects.filter(scenario__icontains=self.di["scenario"])
+        posts = Post.objects.filter(environment__icontains=self.di["environment"])
+        posts = Post.objects.filter(branch__icontains=self.di["branch"])
+        posts = Post.objects.filter(build__icontains=self.di["build"])
+        posts = Post.objects.filter(suite__icontains=self.di["suite"])
+        print posts.count()
         return render_template('posts/list.html', posts=posts)
 
 
