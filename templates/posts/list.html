@@ -29,7 +29,7 @@
 				<td>{{ post.scenario }}</td>
 			{% endif %}
 			<td class="{{ format_result(post.result) }}">{{ format_result(post.result) }}</td>
-			<td><div contenteditable="true" id='{{ post.created_at }}' onblur="edit('{{ post.created_at }}')">{{ post.message }}</div></td>
+			<td contenteditable id='{{ post.created_at }}' onblur="edit('{{ post.created_at }}')">{{ post.message }}</td>
 			<td><i>{{ format_runtime(post.run_time) }}</i></td>
 			<td><i>{{ '' if post.used_memory_delta == -1 else post.used_memory_delta }}</i></td>
 			<td class="last"><i>{{ '' if post.user_cpu_delta == -1 else post.user_cpu_delta}}</i></td>
@@ -38,4 +38,3 @@
 	</tbody>
 </table>
 {% endblock %}
--1

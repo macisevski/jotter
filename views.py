@@ -1,45 +1,42 @@
 """Generate a view as well as handle POST requests
 """
 
-from flask import Blueprint, request, render_template, jsonify, redirect
-from flask import send_from_directory, url_for
-from flask.views import MethodView
-from jotter.models import Post
-from jotter import app
-
+import jotter
+import jotter.models
+import flask
+import flask.views
 import datetime
 import os
 import json
-import base64
 
-posts = Blueprint('posts', __name__, template_folder='templates')
+posts = flask.Blueprint('posts', __name__, template_folder='templates')
 
 
-class ListView(MethodView):
+class ListView(flask.views.MethodView):
     def __init__(self):
         self.di = {'scenario': '', 'environment': '', 'branch': '',
                    'build': '', 'suite': ''}
 
     def get(self, *args, **kwargs):
-        print request.args.keys()
-        for key, value in request.args.iteritems():
+        print flask.request.args.keys()
+        for key, value in flask.request.args.iteritems():
             self.di[key] = value
         # posts = Post.objects(__raw__=di)
-        print Post.objects.count()
-        posts = Post.objects.filter(scenario__icontains=self.di["scenario"])
-        posts = Post.objects.filter(environment__icontains=self.di["environment"])
-        posts = Post.objects.filter(branch__icontains=self.di["branch"])
-        posts = Post.objects.filter(build__icontains=self.di["build"])
-        posts = Post.objects.filter(suite__icontains=self.di["suite"])
+        print jotter.models.Post.objects.count()
+        posts = jotter.models.Post.objects.filter(scenario__icontains=self.di["scenario"])
+        posts = jotter.models.Post.objects.filter(environment__icontains=self.di["environment"])
+        posts = jotter.models.Post.objects.filter(branch__icontains=self.di["branch"])
+        posts = jotter.models.Post.objects.filter(build__icontains=self.di["build"])
+        posts = jotter.models.Post.objects.filter(suite__icontains=self.di["suite"])
         print posts.count()
-        return render_template('posts/list.html', posts=posts)
+        return flask.render_template('posts/list.html', posts=posts)
 
 
-@app.route("/jot", methods=["GET", "POST"])
+@jotter.app.route("/jot", methods=["GET", "POST"])
 def add_post():
     try:
-        data = json.loads(request.get_data())
-        post = Post()
+        data = json.loads(flask.request.get_data())
+        post = jotter.models.Post()
         post.created_at = datetime.datetime.now()
         post.environment = data.get('environment', '')
         post.branch = data.get('branch', '')
@@ -53,34 +50,35 @@ def add_post():
         post.user_cpu_delta = data.get('user_cpu_delta', -1)
         post.report = data.get('report', '')
         post.save()
-	r = post
-    except Exception, e:
-        print e
-        r = {"Error": str(e)}
+        ret = post
+    except Exception, error:
+        print error
+        ret = {"Error": str(error)}
     finally:
-        return jsonify({"posted":r})
+        return flask.jsonify({"posted": ret})
 
 
-@app.route("/upload", methods=["POST", "GET"])
+@jotter.app.route("/upload", methods=["POST", "GET"])
 def upload():
-	import urllib
-        fname = request.headers['name']
-        data = request.get_data()
-        f = open(os.path.join(app.config["UPLOAD_FOLDER"], fname), 'w')
-        f.write(data)
-        f.close()
-        return jsonify({'uploaded_file': fname})
+    fname = flask.request.headers['name']
+    data = flask.request.get_data()
+    f = open(os.path.join(jotter.app.config["UPLOAD_FOLDER"], fname), 'w')
+    f.write(data)
+    f.close()
+    return flask.jsonify({'uploaded_file': fname})
 
-@app.route("/update", methods=["PUT"])
+
+@jotter.app.route("/update", methods=["PUT"])
 def update_post():
-	data = json.loads(request.get_data())
-	post = Post.objects.filter(created_at=data['created_at'])[0]
-	post.message = data['message']
-	post.save()
-	return jsonify({'message': data['message']})
+    data = json.loads(flask.request.get_data())
+    post = jotter.models.Post.objects.filter(created_at=data['created_at'])[0]
+    post.message = data['message']
+    post.save()
+    return flask.jsonify({'message': data['message']})
 
-@app.route("/uploads/<filename>")
+
+@jotter.app.route("/uploads/<filename>")
 def uploaded_file(filename):
-    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+    return flask.send_from_directory(jotter.app.config["UPLOAD_FOLDER"], filename)
 
 posts.add_url_rule('/', view_func=ListView.as_view('ListView'))
