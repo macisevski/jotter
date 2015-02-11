@@ -24,7 +24,7 @@
 			<td>{{ post.build }}</td>
 			<td>{{ post.suite }}</td>
 			{% if post.report != ''%}
-				<td><a href='/uploads/{{post.report}}'>{{ post.scenario }}</a></td>
+			<td><a href='/details/{{post.report}}'>{{ post.scenario }}</a> [<a style="font-size: 10px"  href='/uploads/{{post.report}}'>download</a>]</td>
 			{% else %}
 				<td>{{ post.scenario }}</td>
 			{% endif %}

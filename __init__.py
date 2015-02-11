@@ -31,6 +31,8 @@ def utility_processor():
 def register_blueprints(app):
     # Prevent circular imports
     from jotter.views import posts
+    from jotter.views import details
     app.register_blueprint(posts)
+    app.register_blueprint(details)
 
 register_blueprints(app)

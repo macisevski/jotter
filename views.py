@@ -8,11 +8,18 @@ import flask.views
 import datetime
 import os
 import json
+import io
+import lxml.etree
 
 posts = flask.Blueprint('posts', __name__, template_folder='templates')
+details = flask.Blueprint('details', __name__, template_folder='templates')
 
 
 class ListView(flask.views.MethodView):
+    """Pluggable (class based) view
+        good in cases when new views need to be inherited from a base view to
+        avoid code duplication
+    """
     def __init__(self):
         self.di = {'scenario': '', 'environment': '', 'branch': '',
                    'build': '', 'suite': ''}
@@ -30,6 +37,43 @@ class ListView(flask.views.MethodView):
         posts = jotter.models.Post.objects.filter(suite__icontains=self.di["suite"])
         print posts.count()
         return flask.render_template('posts/list.html', posts=posts)
+
+
+class DetailsView(flask.views.MethodView):
+    def __init__(self):
+        self.di = {}
+        self.tags = ['TestCase', 'BasicSequence', 'TestStep', 'AbstractStepLog',
+                     'ProcedureLog']
+
+    def get(self, filename):
+        with open('uploads/'+ filename) as book:
+            a = self.get_text(book.read())
+        return flask.render_template('details/table.html', details=a)
+
+    def get_text(self, xml):
+        r = []
+        a = lxml.etree.parse(io.BytesIO(xml))
+        t = a.xpath("BaseTestLog/BaseTestLog/AbstractStepLog/BaseTestLog[@name] | BaseTestLog/BaseTestLog/AbstractStepLog/BaseTestLog/BasicSequenceLog/*[@name] | BaseTestLog/BaseTestLog/AbstractStepLog/BaseTestLog/BasicSequenceLog[count(TestStep)>0]/AbstractStepLog/*[@name]")
+        print type(t)
+        for i in t:
+            r.append({'name': i.attrib.get('name', ''), 'tag': i.tag})
+        #for ac, elem in lxml.etree.iterparse(io.BytesIO(xml)):
+        #    di = {}
+        #    tag = elem.tag
+        #    if not tag in self.tags:
+        #        continue
+        #    name = elem.attrib.get('name', None)
+        #    if not name:
+        #        continue
+        #    parent = elem.getparent()
+        #    if parent:
+        #        parent_tag = parent.tag
+        #        testtype = parent.attrib.get('testtype', None)
+        #    if testtype == 'teststep':
+        #        r.append({'name': name, 'tag': tag})
+        #    if parent_tag == 'AbstractStepLog':
+        #        r.append({'name': name, 'tag': tag})
+        return r
 
 
 @jotter.app.route("/jot", methods=["GET", "POST"])
@@ -81,4 +125,7 @@ def update_post():
 def uploaded_file(filename):
     return flask.send_from_directory(jotter.app.config["UPLOAD_FOLDER"], filename)
 
-posts.add_url_rule('/', view_func=ListView.as_view('ListView'))
+
+# Class base views cannot be decorated, so map ListView to url this way
+posts.add_url_rule('/', view_func=ListView.as_view('posts'))
+details.add_url_rule('/details/<filename>', view_func=DetailsView.as_view('details'))
