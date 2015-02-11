@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table>
+	<thead>
+		<th>step</th>
+		<th>type</th>
+		<th>details</th>
+	</thead>
+	<tbody>
+	{% for tag in details %}
+			<tr> 
+				<td>{{ tag['name'] }}</td>
+				<td>{{ tag['tag'] }}</td>
+				<td></td>
+			</tr>
+	{% endfor %}
+	</tbody>
+</table>
+{% endblock %}
