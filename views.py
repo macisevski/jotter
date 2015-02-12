@@ -53,7 +53,10 @@ class DetailsView(flask.views.MethodView):
     def get_text(self, xml):
         r = []
         a = lxml.etree.parse(io.BytesIO(xml))
-        t = a.xpath("BaseTestLog/BaseTestLog/AbstractStepLog/BaseTestLog[@name] | BaseTestLog/BaseTestLog/AbstractStepLog/BaseTestLog/BasicSequenceLog/*[@name] | BaseTestLog/BaseTestLog/AbstractStepLog/BaseTestLog/BasicSequenceLog[count(TestStep)>0]/AbstractStepLog/*[@name]")
+        t = a.xpath("BaseTestLog/BaseTestLog/AbstractStepLog/BaseTestLog[@name] |" +
+                    "BaseTestLog/BaseTestLog/AbstractStepLog/BaseTestLog/BasicSequenceLog/*[@name] |" +
+                    "BaseTestLog/BaseTestLog/AbstractStepLog/BaseTestLog/BasicSequenceLog[not(@name)]/AbstractStepLog[not(@name)]/ProcedureLog[@name]/AbstractStepLog[@name] |" +
+                    "BaseTestLog/BaseTestLog/AbstractStepLog/BaseTestLog/BasicSequenceLog[TestStep]/AbstractStepLog[not(@name)]/*[@name]")
         print type(t)
         for i in t:
             r.append({'name': i.attrib.get('name', ''), 'tag': i.tag})
