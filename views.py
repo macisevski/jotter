@@ -98,11 +98,12 @@ def add_post():
         post.report = data.get('report', '')
         post.customstream = data.get('customstream', '')
         post.fixhub = data.get('fixhub', '')
-        post.fixhub = data.get('tradelog', '')
-        post.fixhub = data.get('pulse', '')
-        post.fixhub = data.get('omflexnew', '')
-        post.fixhub = data.get('fixflex', '')
-        post.fixhub = data.get('fixbrk', '')
+        post.tradelog = data.get('tradelog', '')
+        post.pulse = data.get('pulse', '')
+        post.omflexnew = data.get('omflexnew', '')
+        post.fixflex = data.get('fixflex', '')
+        post.fixbrk = data.get('fixbrk', '')
+        print post
         post.save()
         ret = post
     except Exception, error:
