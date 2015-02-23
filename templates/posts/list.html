@@ -4,7 +4,14 @@
 <table>
 	<thead>
 		<th>created</th>
-		<th>environment</th>
+		<th>env</th>
+		<th>CustomStream.so</th>
+		<th>FIXHub.jar</th>
+		<th>tradelog.jar</th>
+		<th>pulse.so</th>
+		<th>OM_flex_new</th>
+		<th>fix_flex</th>
+		<th>fix_brk</th>
 		<th>branch</th>
 		<th>build</th>
 		<th>suite</th>
@@ -18,18 +25,29 @@
 	<tbody>
 	{% for post in posts %}
 		<tr class="{{ loop.cycle('odd', 'even') }}">
-			<td><i>{{ post.created_at.strftime('%d-%m-%y (%H:%M:%S)') }}</i></td>
-			<td>{{ post.environment }}</td>
+			{% if post.environment != '' %}
+				<td><i>{{ post.created_at.strftime('%d-%m-%y (%H:%M:%S)') }}</i></td>
+			{% else %}
+				<td></td>
+			{% endif %}
+			<td>{{ post.environment[:post.environment.find('.')] }}</td>
+			<td>{{ post.customstream }}</td>
+			<td>{{ post.fixhub }}</td>
+			<td>{{ post.tradelog }}</td>
+			<td>{{ post.pulse }}</td>
+			<td>{{ post.OMflexnew }}</td>
+			<td>{{ post.fixflex }}</td>
+			<td>{{ post.fixbrk }}</td>
 			<td>{{ post.branch }}</td>
 			<td>{{ post.build }}</td>
 			<td>{{ post.suite }}</td>
 			{% if post.report != ''%}
-			<td><a href='/details/{{post.report}}'>{{ post.scenario }}</a> [<a style="font-size: 10px"  href='/uploads/{{post.report}}'>download</a>]</td>
+				<td><a href='/details/{{post.report}}'>{{ post.scenario }}</a> [<a style="font-size: 10px"  href='/uploads/{{post.report}}'>download</a>]</td>
 			{% else %}
 				<td>{{ post.scenario }}</td>
 			{% endif %}
 			<td class="{{ format_result(post.result) }}">{{ format_result(post.result) }}</td>
-			<td contenteditable id='{{ post.created_at }}' onblur="edit('{{ post.created_at }}')">{{ post.message }}</td>
+			<td contenteditable id='{{ post.created_at }}' onblur="edit('{{ post.created_at }}')" style="font-size: smaller"><i>{{ post.message }}</i></td>
 			<td><i>{{ format_runtime(post.run_time) }}</i></td>
 			<td><i>{{ '' if post.used_memory_delta == -1 else post.used_memory_delta }}</i></td>
 			<td class="last"><i>{{ '' if post.user_cpu_delta == -1 else post.user_cpu_delta}}</i></td>
