@@ -31,17 +31,17 @@
 				<td></td>
 			{% endif %}
 			<td>{{ post.environment[:post.environment.find('.')] }}</td>
-			<td>{{ post.customstream }}</td>
-			<td>{{ post.fixhub }}</td>
-			<td>{{ post.tradelog }}</td>
-			<td>{{ post.pulse }}</td>
-			<td>{{ post.OMflexnew }}</td>
-			<td>{{ post.fixflex }}</td>
-			<td>{{ post.fixbrk }}</td>
+			<td style="font-size: smaller">{{ post.customstream }}</td>
+			<td style="font-size: smaller">{{ post.fixhub }}</td>
+			<td style="font-size: smaller">{{ post.tradelog }}</td>
+			<td style="font-size: smaller">{{ post.pulse }}</td>
+			<td style="font-size: smaller">{{ post.OMflexnew }}</td>
+			<td style="font-size: smaller">{{ post.fixflex }}</td>
+			<td style="font-size: smaller">{{ post.fixbrk }}</td>
 			<td>{{ post.branch }}</td>
-			<td>{{ post.build }}</td>
-			<td>{{ post.suite }}</td>
-			{% if post.report != ''%}
+			<td style="font-size: smaller">{{ post.build }}</td>
+			<td style="font-size: smaller">{{ post.suite }}</td>
+			{% if post.report != '' and post.suite != '' %}
 				<td><a href='/details/{{post.report}}'>{{ post.scenario }}</a> [<a style="font-size: 10px"  href='/uploads/{{post.report}}'>download</a>]</td>
 			{% else %}
 				<td>{{ post.scenario }}</td>
