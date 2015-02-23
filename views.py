@@ -96,6 +96,13 @@ def add_post():
         post.used_memory_delta = data.get('used_memory_delta', -1)
         post.user_cpu_delta = data.get('user_cpu_delta', -1)
         post.report = data.get('report', '')
+        post.customstream = data.get('customstream', '')
+        post.fixhub = data.get('fixhub', '')
+        post.fixhub = data.get('tradelog', '')
+        post.fixhub = data.get('pulse', '')
+        post.fixhub = data.get('omflexnew', '')
+        post.fixhub = data.get('fixflex', '')
+        post.fixhub = data.get('fixbrk', '')
         post.save()
         ret = post
     except Exception, error:
