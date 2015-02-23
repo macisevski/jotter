@@ -6,6 +6,7 @@ from jotter import db
 
 
 class Post(db.Document):
+
     created_at = db.DateTimeField(default=datetime.datetime.now(),
                                   required=True
                                   )
@@ -20,13 +21,18 @@ class Post(db.Document):
     used_memory_delta = db.DecimalField(required=False)
     user_cpu_delta = db.DecimalField(required=False)
     report = db.StringField(required=False)
+    customstream = db.StringField(required=False)
+    fixhub = db.StringField(required=False)
+    tradelog = db.StringField(required=False)
+    pulse = db.StringField(required=False)
+    omflexnew = db.StringField(required=False)
+    fixflex = db.StringField(required=False)
+    fixbrk = db.StringField(required=False)
 
     meta = {'allow_inheritance': True, 'indexes': ['-created_at'],
             'ordering': ['-created_at']
             }
 
     def find(self, report):
-	print type(db)
-	post = self.objects.filter(report=report)[0]
-	return post
-
+        post = self.objects.filter(report=report)[0]
+        return post
