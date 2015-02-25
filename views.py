@@ -11,6 +11,7 @@ import json
 import io
 import lxml.etree
 import zipfile
+import zlib
 
 posts = flask.Blueprint('posts', __name__, template_folder='templates')
 details = flask.Blueprint('details', __name__, template_folder='templates')
@@ -21,6 +22,7 @@ class ListView(flask.views.MethodView):
         good in cases when new views need to be inherited from a base view to
         avoid code duplication
     """
+
     def __init__(self):
         self.di = {'scenario': '', 'environment': '', 'branch': '',
                    'build': '', 'suite': ''}
@@ -37,10 +39,12 @@ class ListView(flask.views.MethodView):
         posts = jotter.models.Post.objects.filter(build__icontains=self.di["build"])
         posts = jotter.models.Post.objects.filter(suite__icontains=self.di["suite"])
         print posts.count()
+
         return flask.render_template('posts/list.html', posts=posts)
 
 
 class DetailsView(flask.views.MethodView):
+
     def __init__(self):
         self.di = {}
         self.tags = ['TestCase', 'BasicSequence', 'TestStep', 'AbstractStepLog',
@@ -50,6 +54,7 @@ class DetailsView(flask.views.MethodView):
         zfname = filename + '.zip'
         with zipfile.ZipFile('uploads/'+ zfname) as book:
             a = self.get_text(book.read(filename))
+
         return flask.render_template('details/table.html', details=a)
 
     def get_text(self, xml):
@@ -59,7 +64,6 @@ class DetailsView(flask.views.MethodView):
                     "BaseTestLog/BaseTestLog/AbstractStepLog/BaseTestLog/BasicSequenceLog/*[@name] |" +
                     "BaseTestLog/BaseTestLog/AbstractStepLog/BaseTestLog/BasicSequenceLog[not(@name)]/AbstractStepLog[not(@name)]/ProcedureLog[@name]/AbstractStepLog[@name] |" +
                     "BaseTestLog/BaseTestLog/AbstractStepLog/BaseTestLog/BasicSequenceLog[TestStep]/AbstractStepLog[not(@name)]/*[@name]")
-        print type(t)
         for i in t:
             r.append({'name': i.attrib.get('name', ''), 'tag': i.tag})
         #for ac, elem in lxml.etree.iterparse(io.BytesIO(xml)):
@@ -112,6 +116,7 @@ def add_post():
         print error
         ret = {"Error": str(error)}
     finally:
+
         return flask.jsonify({"posted": ret})
 
 
@@ -121,8 +126,12 @@ def upload():
     fpath = os.path.join(jotter.app.config["UPLOAD_FOLDER"]. fname)
     zfpath = fpath + '.zip'
     data = flask.request.get_data()
+    with open(fpath, 'w') as f:
+        f.write(data)
     with zipfile.ZipFile(zfpath, 'w') as zf:
-        zf.write(data)
+        zf.write(fpath)
+    os.remove(fpath)
+
     return flask.jsonify({'uploaded_file': fname})
 
 
@@ -132,12 +141,14 @@ def update_post():
     post = jotter.models.Post.objects.filter(created_at=data['created_at'])[0]
     post.message = data['message']
     post.save()
+
     return flask.jsonify({'message': data['message']})
 
 
 @jotter.app.route("/uploads/<filename>")
 def uploaded_file(filename):
     zfname = filename + '.zip'
+
     return flask.send_from_directory(jotter.app.config["UPLOAD_FOLDER"], zfname)
 
 
