@@ -123,7 +123,7 @@ def add_post():
 @jotter.app.route("/upload", methods=["POST", "GET"])
 def upload():
     fname = flask.request.headers['name']
-    fpath = os.path.join(jotter.app.config["UPLOAD_FOLDER"]. fname)
+    fpath = os.path.join(jotter.app.config["UPLOAD_FOLDER"], fname)
     zfpath = fpath + '.zip'
     data = flask.request.get_data()
     with open(fpath, 'w') as f:
