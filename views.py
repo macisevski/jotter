@@ -10,6 +10,7 @@ import os
 import json
 import io
 import lxml.etree
+import zipfile
 
 posts = flask.Blueprint('posts', __name__, template_folder='templates')
 details = flask.Blueprint('details', __name__, template_folder='templates')
@@ -46,8 +47,9 @@ class DetailsView(flask.views.MethodView):
                      'ProcedureLog']
 
     def get(self, filename):
-        with open('uploads/'+ filename) as book:
-            a = self.get_text(book.read())
+        zfname = filename + '.zip'
+        with zipfile.ZipFile('uploads/'+ zfname) as book:
+            a = self.get_text(book.read(filename))
         return flask.render_template('details/table.html', details=a)
 
     def get_text(self, xml):
@@ -116,10 +118,11 @@ def add_post():
 @jotter.app.route("/upload", methods=["POST", "GET"])
 def upload():
     fname = flask.request.headers['name']
+    fpath = os.path.join(jotter.app.config["UPLOAD_FOLDER"]. fname)
+    zfpath = fpath + '.zip'
     data = flask.request.get_data()
-    f = open(os.path.join(jotter.app.config["UPLOAD_FOLDER"], fname), 'w')
-    f.write(data)
-    f.close()
+    with zipfile.ZipFile(zfpath, 'w') as zf:
+        zf.write(data)
     return flask.jsonify({'uploaded_file': fname})
 
 
@@ -134,7 +137,8 @@ def update_post():
 
 @jotter.app.route("/uploads/<filename>")
 def uploaded_file(filename):
-    return flask.send_from_directory(jotter.app.config["UPLOAD_FOLDER"], filename)
+    zfname = filename + '.zip'
+    return flask.send_from_directory(jotter.app.config["UPLOAD_FOLDER"], zfname)
 
 
 # Class base views cannot be decorated, so map ListView to url this way
