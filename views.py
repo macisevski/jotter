@@ -125,11 +125,12 @@ def upload():
     fname = flask.request.headers['name']
     fpath = os.path.join(jotter.app.config["UPLOAD_FOLDER"], fname)
     zfpath = fpath + '.zip'
+    compression = zipfile.ZIP_DEFLATED
     data = flask.request.get_data()
     with open(fpath, 'w') as f:
         f.write(data)
     with zipfile.ZipFile(zfpath, 'w') as zf:
-        zf.write(fname)
+        zf.write(fpath, arcname=fname, compress_type=compression)
     os.remove(fpath)
 
     return flask.jsonify({'uploaded_file': fname})
