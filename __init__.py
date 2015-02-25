@@ -2,11 +2,12 @@ from flask import Flask
 from flask.ext.mongoengine import MongoEngine
 
 import datetime
+import os
 
 app = Flask(__name__)
 app.config["MONGODB_SETTINGS"] = {'DB': "jotter"}
 app.config["SECRET_KEY"] = "backtoussr"
-app.config["UPLOAD_FOLDER"] = "uploads/"
+app.config["UPLOAD_FOLDER"] = os.path.join(os.getcwd(), "uploads")
 
 db = MongoEngine(app)
 
