@@ -129,7 +129,7 @@ def upload():
     with open(fpath, 'w') as f:
         f.write(data)
     with zipfile.ZipFile(zfpath, 'w') as zf:
-        zf.write(fpath)
+        zf.write(fname)
     os.remove(fpath)
 
     return flask.jsonify({'uploaded_file': fname})
