@@ -44,6 +44,8 @@ class ListView(flask.views.MethodView):
 
 
 class DetailsView(flask.views.MethodView):
+    """
+    """
 
     def __init__(self):
         self.di = {}
@@ -51,21 +53,30 @@ class DetailsView(flask.views.MethodView):
                      'ProcedureLog']
 
     def get(self, filename):
+        """
+        """
+
         zfname = filename + '.zip'
         with zipfile.ZipFile('uploads/'+ zfname) as book:
             a = self.get_text(book.read(filename))
-
         return flask.render_template('details/table.html', details=a)
 
     def get_text(self, xml):
+        """
+        """
+
         r = []
         a = lxml.etree.parse(io.BytesIO(xml))
         t = a.xpath("BaseTestLog/BaseTestLog/AbstractStepLog/BaseTestLog[@name] |" +
                     "BaseTestLog/BaseTestLog/AbstractStepLog/BaseTestLog/BasicSequenceLog/*[@name] |" +
                     "BaseTestLog/BaseTestLog/AbstractStepLog/BaseTestLog/BasicSequenceLog[not(@name)]/AbstractStepLog[not(@name)]/ProcedureLog[@name]/AbstractStepLog[@name] |" +
+                    "//MessageLog[@resource='msg.setLocal'] |" +
                     "BaseTestLog/BaseTestLog/AbstractStepLog/BaseTestLog/BasicSequenceLog[TestStep]/AbstractStepLog[not(@name)]/*[@name]")
         for i in t:
-            r.append({'name': i.attrib.get('name', ''), 'tag': i.tag})
+            if i.attrib.get('name', '') != '':
+                r.append({'name': i.attrib.get('name', ''), 'tag': i.tag})
+            else:
+                r.append({'name': i.attrib.get('resource', '') + '(' + ', '.join(str(child.text) for child in i.iterchildren()) + ')', 'tag': i.tag})
         #for ac, elem in lxml.etree.iterparse(io.BytesIO(xml)):
         #    di = {}
         #    tag = elem.tag
@@ -87,6 +98,9 @@ class DetailsView(flask.views.MethodView):
 
 @jotter.app.route("/jot", methods=["GET", "POST"])
 def add_post():
+    """
+    """
+
     try:
         data = json.loads(flask.request.get_data())
         post = jotter.models.Post()
@@ -116,12 +130,14 @@ def add_post():
         print error
         ret = {"Error": str(error)}
     finally:
-
         return flask.jsonify({"posted": ret})
 
 
 @jotter.app.route("/upload", methods=["POST", "GET"])
 def upload():
+    """
+    """
+
     fname = flask.request.headers['name']
     fpath = os.path.join(jotter.app.config["UPLOAD_FOLDER"], fname)
     zfpath = fpath + '.zip'
@@ -132,25 +148,28 @@ def upload():
     with zipfile.ZipFile(zfpath, 'w') as zf:
         zf.write(fpath, arcname=fname, compress_type=compression)
     os.remove(fpath)
-
     return flask.jsonify({'uploaded_file': fname})
 
 
 @jotter.app.route("/update", methods=["PUT"])
 def update_post():
+    """
+    """
+
     data = json.loads(flask.request.get_data())
     post = jotter.models.Post.objects.filter(created_at=data['created_at'])[0]
     post.message = data['message']
     post.save()
-
     return flask.jsonify({'message': data['message']})
 
 
 @jotter.app.route("/uploads/<filename>")
 def uploaded_file(filename):
-    zfname = filename + '.zip'
+    """
+    """
 
-    return flask.send_from_directory(jotter.app.config["UPLOAD_FOLDER"], zfname)
+    zfname = filename + '.zip'
+    return flask.send_from_directory(jotter.app.config["UPLOAD_FOLDER"], zfname, as_attachment=True, attachment_filename=zfname)
 
 
 # Class base views cannot be decorated, so map ListView to url this way
